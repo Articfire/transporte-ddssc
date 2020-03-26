@@ -55,7 +55,7 @@ ROOT_URLCONF = 'sistema_transporte.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['sistema_transporte/templates'],
+        'DIRS': [BASE_DIR+'/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
