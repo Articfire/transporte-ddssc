@@ -20,43 +20,56 @@ class Empleados(models.Model):
         choices=PUESTOS_DISPONIBLES,
         default='CH')
 
+    def __str__(self):
+        print(self.apellido_paterno+" "+self.nombres)
+
 class Vehiculos(models.Model):
     marca  = models.CharField(max_length=20)
     modelo = models.CharField(max_length=20)
 
     ESTADOS_DEl_VEHICULO = [
-        ('Di', 'Disponible'),
-        ('Ma', 'En mantenimiento'),
-        ('Tr', 'En transporte') ]
+        ('DI', 'Disponible'),
+        ('NO', 'No Disponible')]
     estado = models.CharField(
         max_length=2,
         choices=ESTADOS_DEl_VEHICULO,
-        default='Di')
+        default='DI')
+
+    def __str__(self):
+        print(self.marca+" "+self.modelo)
 
 class Checklist(models.Model):
-    chofer   = models.ForeignKey(Empleados, on_delete=models.CASCADE)
-    vehiculo = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
+    chofer   = models.OneToOneField(Empleados, on_delete=models.CASCADE)
+    vehiculo = models.OneToOneField(Vehiculos, on_delete=models.CASCADE)
+
+    def __str__(self):
+        print("Agenda de "+Empleados.objects.get(id=self.chofer)+", conductor del "+Vehiculos.objects.get(id=self.vehiculo))
 
 class Servicios(models.Model):
     checklist     = models.ForeignKey(Checklist, on_delete=models.CASCADE)
     lugar_inicio  = models.CharField(max_length=50)
     lugar_destino = models.CharField(max_length=50)
     fecha_inicio  = models.DateTimeField()
+    descripcion   = models.CharField(max_length=50)
 
     ESTADOS_DEL_SERVICIO = [
         ('PH', 'Por hacer'),
         ('EP', 'En proceso'),
-        ('Te', 'Terminado'),
-        ('Fi', 'Firmado'),
-        ('Pr', 'Problema')]
+        ('TE', 'Terminado'),
+        ('FI', 'Firmado'),
+        ('PR', 'Problema')]
     estado        = models.CharField(
         choices=ESTADOS_DEL_SERVICIO, 
         max_length=2, 
         default='PH')
 
+    def __str__(self):
+        print(self.descripcion)
+
+
 # class LlavesLiberacion(models.Model):
 #     llave_liberacion = models.CharField(max_length=20)
-#     servicio = models.ForeignKey(Servicios, on_delete=models.CASCADE)
+#     servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE)
 
 
 # Ideas:
