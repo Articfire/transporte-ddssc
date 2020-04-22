@@ -47,11 +47,12 @@ class Servicios(models.Model):
     vehiculo     = models.ForeignKey(Vehiculos, verbose_name="Vehiculo", on_delete=models.CASCADE)
 
     ESTADOS_DEL_SERVICIO = [
+        ('ES', 'En Solicitud'),
+        ('SC', 'Solicitud Cancelada')
         ('PH', 'Por hacer'),
         ('EP', 'En proceso'),
         ('TE', 'Terminado'),
         ('FI', 'Firmado'),
-        ('PR', 'Problema')]
     estado        = models.CharField(
         choices=ESTADOS_DEL_SERVICIO, 
         max_length=2, 
