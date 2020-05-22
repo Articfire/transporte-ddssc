@@ -20,9 +20,6 @@ class Empleados(models.Model):
         choices=PUESTOS_DISPONIBLES,
         default='CH')
 
-    def __str__(self):
-        print(self.apellido_paterno+" "+self.nombres)
-
 class Vehiculos(models.Model):
     marca  = models.CharField(max_length=20)
     modelo = models.CharField(max_length=20)
@@ -35,28 +32,37 @@ class Vehiculos(models.Model):
         choices=ESTADOS_DEl_VEHICULO,
         default='DI')
 
-    def __str__(self):
-        print(self.marca+" "+self.modelo)
+class Clientes(models.Model):
+    nombres          = models.CharField(max_length=20)
+    apellido_materno = models.CharField(max_length=20)
+    apellido_paterno = models.CharField(max_length=20)
+    telefono         = models.CharField(max_length=20)
+    correo           = models.CharField(max_length=30)
+    clave            = models.CharField(max_length=20)
+
+class Pagos(models.Model):
+    nombre_titular   = models.CharField(max_length=20)
+    numero_tarjeta   = models.CharField(max_length=40)
+    fecha_expiracion = models.DateField(auto_now=False, auto_now_add=False)
+    codigo_seguridad = models.IntegerField()
 
 class Servicios(models.Model):
     lugar_inicio  = models.CharField(max_length=50)
     lugar_destino = models.CharField(max_length=50)
-    fecha_inicio  = models.DateTimeField()
-    descripcion   = models.CharField(max_length=50)
-    chofer        = models.ForeignKey(Empleados, verbose_name="Chofer", on_delete=models.CASCADE)
-    vehiculo     = models.ForeignKey(Vehiculos, verbose_name="Vehiculo", on_delete=models.CASCADE)
+    fecha         = models.DateTimeField()
+    a_transportar = models.CharField(max_length=50)
+    chofer        = models.ForeignKey(Empleados, on_delete=models.CASCADE)
+    vehiculo      = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
+    solicitante   = models.OneToOneField(Clientes, on_delete=models.CASCADE)
+    pago          = models.OneToOneField(Pagos, on_delete=models.CASCADE)
 
     ESTADOS_DEL_SERVICIO = [
-        ('ES', 'En Solicitud'),
-        ('SC', 'Solicitud Cancelada')
+        ('SS', 'Servicio Solicitado')
         ('PH', 'Por hacer'),
         ('EP', 'En proceso'),
         ('TE', 'Terminado'),
-        ('FI', 'Firmado'),
+        ('FI', 'Firmado'),]
     estado        = models.CharField(
         choices=ESTADOS_DEL_SERVICIO, 
         max_length=2, 
         default='PH')
-
-    def __str__(self):
-        print(self.descripcion)

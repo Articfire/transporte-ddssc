@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Solicitud Transporte{% endblock title %}
+
+{% block content %}
+<h1>Solicitud Transporte</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <form action="">
+                Lugar de inicio
+                <input class="form-control mb-4" type="text">
+                Lugar de destino
+                <input class="form-control mb-4" type="text">
+                Fecha de inicio
+                <input class="form-control mb-4" type="date">
+                Descripcion del servicio
+                <textarea class="form-control mb-4" cols="30" rows="5"></textarea>
+                <button class="btn btn-danger">Enviar solicitud</button>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}
