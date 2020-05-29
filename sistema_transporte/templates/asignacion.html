@@ -6,27 +6,44 @@
 {% block content %}
 <h1>Asignacion de Servicio</h1>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            Choferes
-            <select class="form-control" id="choferes">
-                <option value="volvo">Chofer 1</option>
-                <option value="saab">Chofer 2</option>
-                <option value="opel">Chofer 3</option>
-                <option value="audi">Chofer 4</option>
-            </select>
-
-            Vehiculos
-            <select class="form-control" id="vehiculos">
-                <option value="volvo">Vehiculo 1</option>
-                <option value="saab">Vehiculo 2</option>
-                <option value="opel">Vehiculo 3</option>
-                <option value="audi">Vehiculo 4</option>
-            </select>
-            <button class="btn btn-danger">Asignar ahora</button>
-        </div>
-        <div class="col"></div>
-    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Lugar de inicio</th>
+                <th scope="col">Lugar de destino</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">A transportar</th>
+                <th scope="col">Chofer</th>
+                <th scope="col">Vehiculo</th>
+                <th scope="col">Asignar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Lugar 1</td>
+                <td>Lugar 2</td>
+                <td>Fecha de ejemplo</td>
+                <td>Mascota 1</td>
+                <td>
+                    <select class="form-control" name="Choferes">
+                        <option value="volvo">Chofer 1</option>
+                        <option value="saab">Chofer 2</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="Vehiculos">
+                        <option value="volvo">Vehiculo 1</option>
+                        <option value="saab">Vehiculo 2</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-success">Asignar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 {% endblock content %}
 
