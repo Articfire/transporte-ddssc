@@ -3,82 +3,64 @@ from django.utils import timezone
 
 
 class Empleados(models.Model):
-    nombres          = models.CharField(max_length=20)
+    nombres = models.CharField(max_length=40)
     apellido_materno = models.CharField(max_length=20)
     apellido_paterno = models.CharField(max_length=20)
     fecha_nacimiento = models.DateField()
-    rfc              = models.CharField(max_length=13)
+    rfc = models.CharField(max_length=13)
 
-    PUESTOS_DISPONIBLES = [
-        ('CH', 'Chofer'),
-        ('TM', 'Tecnico de mantenimiento'),
-        ('SC', 'Supervisor de Chofer'),
-        ('JM', 'Jefe de mantenimiento'),
-        ('GT', 'Gerente de transporte')]
-    puesto              = models.CharField(
+    puesto = models.CharField(
         max_length=2,
-        choices=PUESTOS_DISPONIBLES,
-        default='CH')
-
-    def __str__(self):
-        print(self.apellido_paterno+" "+self.nombres)
+        choices=[
+			('CH', 'Chofer'),
+			('TM', 'Tecnico de mantenimiento'),
+			('SC', 'Supervisor de Chofer'),
+			('JM', 'Jefe de mantenimiento'),
+			('GT', 'Gerente de transporte')
+		],
+        default='CH'
+	)
 
 class Vehiculos(models.Model):
-    marca  = models.CharField(max_length=20)
+    marca = models.CharField(max_length=20)
     modelo = models.CharField(max_length=20)
+    disponible = models.BooleanField()
 
-    ESTADOS_DEl_VEHICULO = [
-        ('DI', 'Disponible'),
-        ('NO', 'No Disponible')]
-    estado = models.CharField(
-        max_length=2,
-        choices=ESTADOS_DEl_VEHICULO,
-        default='DI')
+class Clientes(models.Model):
+    nombres = models.CharField(max_length=20)
+    apellido_materno = models.CharField(max_length=20)
+    apellido_paterno = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20)
+    correo = models.CharField(max_length=30)
 
-    def __str__(self):
-        print(self.marca+" "+self.modelo)
-
-class Checklist(models.Model):
-    chofer   = models.OneToOneField(Empleados, on_delete=models.CASCADE)
-    vehiculo = models.OneToOneField(Vehiculos, on_delete=models.CASCADE)
-
-    def __str__(self):
-        print("Agenda de "+Empleados.objects.get(id=self.chofer)+", conductor del "+Vehiculos.objects.get(id=self.vehiculo))
+class Pagos(models.Model):
+    nombre_titular = models.CharField(max_length=20)
+    numero_tarjeta = models.CharField(max_length=20)
+    fecha_expiracion = models.DateField(auto_now=False, auto_now_add=False)
+    codigo_seguridad = models.IntegerField()
 
 class Servicios(models.Model):
-    checklist     = models.ForeignKey(Checklist, on_delete=models.CASCADE)
-    lugar_inicio  = models.CharField(max_length=50)
-    lugar_destino = models.CharField(max_length=50)
-    fecha_inicio  = models.DateTimeField()
-    descripcion   = models.CharField(max_length=50)
+	chofer = models.ForeignKey(Empleados, on_delete=models.CASCADE)
+	vehiculo = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
+	cliente = models.OneToOneField(Clientes, on_delete=models.CASCADE)
+	pago = models.OneToOneField(Pagos, on_delete=models.CASCADE)
+	mascota = models.CharField(max_length=20)
+	lugar_inicio = models.CharField(max_length=40)
+	lugar_destino = models.CharField(max_length=40)
 
-    ESTADOS_DEL_SERVICIO = [
-        ('PH', 'Por hacer'),
-        ('EP', 'En proceso'),
-        ('TE', 'Terminado'),
-        ('FI', 'Firmado'),
-        ('PR', 'Problema')]
-    estado        = models.CharField(
-        choices=ESTADOS_DEL_SERVICIO, 
-        max_length=2, 
-        default='PH')
+	estado = models.CharField(
+		max_length=2,
+		choices=[
+			('SO', 'Solicitado'),
+			('AG', 'Agendado'),
+			('EJ', 'Ejecucion'),
+			('TE', 'Terminado'),
+			('FI', 'Firmado')
+		],
+		default='SO'
+	)
 
-    def __str__(self):
-        print(self.descripcion)
-
-
-# class LlavesLiberacion(models.Model):
-#     llave_liberacion = models.CharField(max_length=20)
-#     servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE)
-
-
-# Ideas:
-# 1.Que haya una tabla llamada "LlavesLiberacion" que
-# contenga codigos alfanumericos que el gerente le da 
-# al cliente una vez que se registra su solicitud de 
-# transporte para que solo el cliente pueda liberar un 
-# servicio de transporte desde el sitio web, en el cual 
-# habra un campo de texto para que el cliente inserte 
-# el token desde su dispositivo.
-#
-# 2.
+class Agenda(models.Model):
+	servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE)
+	fecha_inicio = models.DateTimeField()
+	fecha_limite = models.DateTimeField()

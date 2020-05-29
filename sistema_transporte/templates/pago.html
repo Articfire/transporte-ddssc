@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Pago{% endblock title %}
+
+{% block content %}
+<h1>Pago</h1>
+<div class="container-fluid">
+    <form action="" method="post">
+		{% csrf_token %}
+        <div>
+            Visa
+            <input name="metodo" type="radio" checked>
+            Master Card
+            <input name="metodo" type="radio">
+            American Express
+            <input name="metodo" type="radio">
+        </div>
+		<hr>
+        <div class="row">
+            <div class="col">
+
+				<h5>Nombre del titular</h5>
+				<div class="mb-3">
+					<input type="text" class="form-control" placeholder="Nombre del titular">
+				</div>
+
+				<h5>Numero de tarjeta</h5>
+				<div class="mb-3">
+					<input type="text" class="form-control" placeholder="Numero de tarjeta">
+				</div>
+
+				<h5>Fecha de expiracion</h5>
+				<div class="row">
+					<div class="col">
+						<div class="mb-3">
+							<input type="text" class="form-control" placeholder="Mes">
+						</div>
+					</div>
+					<div class="col">
+						<div class="mb-3">
+							<input type="text" class="form-control" placeholder="Año">
+						</div>
+					</div>
+				</div>
+
+				<h5>Codigo de seguridad</h5>
+				<div class="row">
+					<div class="col-4">
+						<div class="mb-3">
+							<input type="text" class="form-control" placeholder="3 digitos">
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+
+        <button class="btn btn-danger">Enviar datos de transaccion</button>
+    </form>
+</div>
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}

@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Solicitud Transporte{% endblock title %}
+
+{% block content %}
+<h1>Solicitud Transporte</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <form action="" method="POST">
+                {% csrf_token %}
+                Lugar de inicio
+                <input class="form-control mb-4" type="text">
+                Lugar de destino
+                <input class="form-control mb-4" type="text">
+                Fecha de inicio
+                <input class="form-control mb-4" type="date">
+                Que se va a transportar?
+                <select class="form-control mb-4" id="choferes">
+                    <option value="Mascota 1">Mascota 1</option>
+                    <option value="Mascota 2">Mascota 2</option>
+                    <option value="Mascota 3">Mascota 3</option>
+                </select>
+                <button class="btn btn-danger">Enviar solicitud</button>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}
