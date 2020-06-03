@@ -45,7 +45,7 @@ class Servicios(models.Model):
 	cliente = models.OneToOneField(Clientes, on_delete=models.CASCADE)
 	pago = models.OneToOneField(Pagos, on_delete=models.CASCADE)
 	mascota = models.CharField(max_length=20)
-	lugar_inicio = models.CharField(max_length=40)
+	lugar_origen = models.CharField(max_length=40)
 	lugar_destino = models.CharField(max_length=40)
 
 	estado = models.CharField(
@@ -62,5 +62,5 @@ class Servicios(models.Model):
 
 class Agenda(models.Model):
 	servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE)
-	fecha_inicio = models.DateTimeField()
+	fecha_origen = models.DateTimeField()
 	fecha_limite = models.DateTimeField()

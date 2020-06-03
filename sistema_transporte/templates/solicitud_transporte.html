@@ -6,27 +6,48 @@
 {% block content %}
 <h1>Solicitud Transporte</h1>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <form action="" method="POST">
-                {% csrf_token %}
-                Lugar de inicio
-                <input class="form-control mb-4" type="text">
-                Lugar de destino
-                <input class="form-control mb-4" type="text">
-                Fecha de inicio
-                <input class="form-control mb-4" type="date">
-                Que se va a transportar?
-                <select class="form-control mb-4" id="choferes">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col">
+                <label for="nombres-cliente">Nombre(s) del cliente:</label>
+                <input id="nombres-cliente" name="nombres-cliente" class="form-control mb-2" type="text">
+
+                <label for="apellido-paterno">Apellido paterno:</label>
+                <input id="apellido-paterno" name="apellido-paterno" class="form-control mb-2" type="text">
+
+                <label for="apellido-materno">Apellido materno:</label>
+                <input id="apellido-materno" name="apellido-materno" class="form-control mb-2" type="text">
+
+                <label for="telefono">Telefono:</label>
+                <input id="telefono" name="telefono" class="form-control mb-2" type="number">
+
+                <label for="correo">Correo:</label>
+                <input id="correo" name="correo" class="form-control mb-2" type="email">
+            </div>
+            <div class="col">
+                <label for="lugar-origen">Lugar de origen:</label>
+                <input id="lugar-origen" name="lugar-origen" class="form-control mb-2" type="text">
+
+                <label for="lugar-destino">Lugar de destino:</label>
+                <input id="lugar-destino" name="lugar-destino" class="form-control mb-2" type="text">
+
+                <label for="fecha-origen">Fecha de origen:</label>
+                <input id="fecha-origen" name="fecha-origen" class="form-control mb-2" type="date">
+                
+                <label for="fecha">Fecha:</label>
+                <input id="fecha" name="fecha" class="form-control mb-2" type="date">
+                
+                <label for="mascota">Que mascota se va a transportar? :</label>
+                <select id="choferes" name="mascota" class="form-control mb-2">
                     <option value="Mascota 1">Mascota 1</option>
                     <option value="Mascota 2">Mascota 2</option>
                     <option value="Mascota 3">Mascota 3</option>
                 </select>
-                <button class="btn btn-danger">Enviar solicitud</button>
-            </form>
+            </div>
         </div>
-        <div class="col"></div>
-    </div>
+        <button class="btn btn-danger">Enviar solicitud</button>
+    </form>
 </div>
 {% endblock content %}
 

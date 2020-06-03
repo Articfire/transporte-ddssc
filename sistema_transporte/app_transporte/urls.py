@@ -7,4 +7,5 @@ urlpatterns = [
     path('agenda', views.agenda, name='agenda'),
     path('asignacion', views.asignacion, name='asignacion'),
     path('firma', views.firma, name='firma'),
+    path('api', views.api_agenda, name='api_agenida'),
 ]

@@ -6,13 +6,13 @@
 {% block content %}
 <h1>Agenda Servicio</h1>
 <div class="container-fluid">
-	<form action="#">
+	<form action="" method="POST">
 		{% csrf_token %}
 		<h3>Notificacion</h3>
 		<p>Su solicitud ha sido procesada y su horario esta desocupado.
 		Desea agendar el servicio?</p>
-		<button class="btn btn-success">Aceptar</button>
-		<button class="btn btn-danger">Cancelar</button>
+		<button name="aceptar" class="btn btn-success">Aceptar</button>
+		<button name="cancelar" class="btn btn-danger">Cancelar</button>
 	</form>
 </div>
 {% endblock content %}
