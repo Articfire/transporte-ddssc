@@ -6,27 +6,30 @@
 {% block content %}
 <h1>Solicitud Transporte</h1>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <form action="" method="POST">
-                {% csrf_token %}
-                Lugar de inicio
-                <input class="form-control mb-4" type="text">
-                Lugar de destino
-                <input class="form-control mb-4" type="text">
-                Fecha de inicio
-                <input class="form-control mb-4" type="date">
-                Que se va a transportar?
-                <select class="form-control mb-4" id="choferes">
-                    <option value="Mascota 1">Mascota 1</option>
-                    <option value="Mascota 2">Mascota 2</option>
-                    <option value="Mascota 3">Mascota 3</option>
-                </select>
-                <button class="btn btn-danger">Enviar solicitud</button>
-            </form>
+    <form action="" method="post">
+        <div class="row">
+            <div class="col">
+                <h2>Informacion del cliente</h2>
+                <label for="nombre_titular">Nombre del titular</label>
+                <input class="form-control mb-3" type="text" name="nombre_titular" id="nombre_titular">
+
+                <label for="numero_tarjeta">Numero de tarjeta</label>
+                <input class="form-control mb-3" type="text" name="numero_tarjeta" id="numero_tarjeta">
+
+                <label for="codigo_seguridad">Codigo de seguridad</label>
+                <input class="form-control mb-3" type="number" name="codigo_seguridad" id="codigo_seguridad">
+
+                <label for="correo">Correo electronico</label>
+                <input class="form-control mb-3" type="email" name="correo" id="correo">
+
+                <label for="fecha_vencimiento">Fecha de vencimiento</label>
+                <input class="form-control mb-3" type="date" name="fecha_vencimiento" id="fecha_vencimiento">
+            </div>
+            <div class="col">
+                <h2>Informacion del servicio</h2>
+            </div>
         </div>
-        <div class="col"></div>
-    </div>
+    </form>
 </div>
 {% endblock content %}
 

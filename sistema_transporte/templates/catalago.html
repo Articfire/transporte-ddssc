@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Catalago{% endblock title %}
+
+{% block content%}
+<h1>Catalago</h1>
+<div class="container-fluid">
+    {% for articulo in catalago %}
+    <div class="card mb-3 mx-2" style="width: 18rem; float: left;">
+        <img class="card-img-top" src="{{ articulo.url }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">Paquete {{ articulo.id }}</h5>
+            <p class="card-text">{{ articulo.vehiculo_id.marca }} {{ articulo.vehiculo_id.modelo }}</p>
+            <p class="card-text">{{ articulo.descripcion }}</p>
+            <p class="card-text">${{ articulo.precio }}</p>
+            <form action="#" method="post">
+                <button href="#" class="btn btn-primary">Seleccionar paquete {{ articulo.id }}</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block script %}
+{% endblock script%}
