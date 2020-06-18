@@ -1,21 +1,24 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block title %}Agenda Servicio{% endblock title %}
+{% block title %}Agenda{% endblock title %}
 
-{% block content %}
-<h1>Agenda Servicio</h1>
+{% block content%}
+
+<h1>Agenda</h1>
 <div class="container-fluid">
-	<form action="" method="POST">
-		{% csrf_token %}
-		<h3>Notificacion</h3>
-		<p>Su solicitud ha sido procesada y su horario esta desocupado.
-		Desea agendar el servicio?</p>
-		<button name="aceptar" class="btn btn-success">Aceptar</button>
-		<button name="cancelar" class="btn btn-danger">Cancelar</button>
-	</form>
+    <label for="fecha_servicio">Fecha del servicio a solicitar</label>
+    <select v-on:change="obtenerObjeto" class="form-control mb-3" name="fecha_servicio" id="fecha_servicio">
+        {% for articulo in disponibilidad %}
+            {% for hora in articulo.horas %}
+            <option value="{{ articulo.fecha }} {{hora}}">{{ articulo.fecha }} {{hora}}</option>
+            {% endfor %}
+        {% endfor %}
+    </select>
+    <button class="btn btn-primary">Elegir fecha y hora</button>
+
 </div>
 {% endblock content %}
 
-{% block js %}
-{% endblock js %}
+{% block script %}
+{% endblock script%}

@@ -1,67 +1,41 @@
+from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import *
-from datetime import datetime
+
+from .models import Agenda, Catalago, Clientes
+from . import utilerias as utils
+
+import datetime
+import requests
 import json
+
 
 def solicitud_transporte(request):
     data = {}
-    form_data = request.POST.dict()
     if request.method == 'POST':
-        nombres_cliente = form_data['nombres-cliente']
-        apellido_paterno = form_data['apellido-paterno']
-        apellido_materno = form_data['apellido-materno']
-        telefono = form_data['telefono']
-        correo = form_data['correo']
+        nombre_titular = request.POST['nombre_titular']
+        numero_tarjeta = request.POST['numero_tarjeta']
+        codigo_seguridad = request.POST['codigo_seguridad']
+        correo = request.POST['correo']
+        fecha_vencimiento = request.POST[' fecha_vencimiento']
 
-        lugar_origen = form_data['lugar-origen']
-        lugar_destino = form_data['lugar-destino']
-        fecha_origen = form_data['fecha-origen']
-        fecha = form_data['fecha']
-        mascota = form_data['mascota']
-
-        Clientes.objects.create(
-            nombres=nombres_cliente,
-            apellido_paterno=apellido_paterno,
-            apellido_materno=apellido_materno,
-            telefono=telefono,
-            correo=correo
-        )
-
-        request.session['data'] = {
-            "lugar_origen" : lugar_origen,
-            "lugar_destino" : lugar_destino,
-            "fecha_origen" : fecha_origen,
-            "fecha" : fecha,
-            "mascota" : mascota,
-        }
-
-        return HttpResponseRedirect('pago')
+        c = Clientes(nombre_titular, numero_tarjeta, codigo_seguridad, correo, fecha_vencimiento)
+        c.save()
+        
     return render(request, 'solicitud_transporte.html', data)
 
-def pago(request):
-    data = {}
-    form_data = request.POST.dict()
-    if request.method == 'POST':
-        nombre_titular = form_data['nombre-titular']
-        numero_tarjeta = form_data['numero-tarjeta']
-        fecha_expiracion = form_data['fecha-expiracion']
-        codigo_seguridad = form_data['codigo-seguridad']
-
-        Pagos.objects.create(
-            nombre_titular=nombre_titular,
-            numero_tarjeta=numero_tarjeta,
-            fecha_expiracion=fecha_expiracion,
-            codigo_seguridad=codigo_seguridad
-        )
-        return HttpResponseRedirect('agenda')
-    return render(request, 'pago.html', data)
+def catalago(request):
+    catalago = list(Catalago.objects.all())
+    data = {'catalago': catalago}
+    return render(request, 'catalago.html', data)
 
 def agenda(request):
-    data = {}
-    if request.method == 'POST':
-        return HttpResponseRedirect('asignacion')
+    data = requests.get('http://localhost:8000/api/disponibilidad').json()
     return render(request, 'agenda.html', data)
+
+def notificacion(request):
+    data = {}
+    return render(request, 'notificacion.html', data)
 
 def asignacion(request):
     data = {}
@@ -71,13 +45,62 @@ def firma(request):
     data = {}
     return render(request, 'firma.html', data)
 
-def api_agenda(request):
-    agenda = Agenda.objects.all()
-    lista_agenda = []
+def api_documentacion(request):
+    data = {}
+    return render(request, 'api_documentacion.html', data)
 
-    for articulo in agenda:
-        lista_agenda.append({
-            'fecha_origen': str(articulo.fecha_origen),
-            'fecha_limite': str(articulo.fecha_limite)
+def api_catalago_filtro(request, catalago_id):
+    try:
+        articulo = Catalago.objects.get(id=catalago_id)
+        data = {
+            'id': articulo.id,
+            'descripcion': articulo.descripcion,
+            'precio': articulo.precio,
+            'url': articulo.url,
+            'marca_vehiculo': articulo.vehiculo.marca,
+            'modelo_vehiculo': articulo.vehiculo.modelo
+        }
+    except Exception:
+        data = {'error': 'Ese id no apunta a ningun articulo del catalago.'}
+    return HttpResponse(json.dumps(data, sort_keys=False, indent=4), content_type="application/json")
+
+def api_catalago(request):
+    data = []
+    catalago = Catalago.objects.all()
+    for articulo in catalago:
+        data.append({
+            'id': articulo.id,
+            'descripcion': articulo.descripcion,
+            'precio': articulo.precio,
+            'url': articulo.url,
+            'marca_vehiculo': articulo.vehiculo.marca,
+            'modelo_vehiculo': articulo.vehiculo.modelo
         })
-    return HttpResponse(json.dumps(lista_agenda))
+    return HttpResponse(json.dumps(data, sort_keys=False, indent=4), content_type="application/json")
+
+def api_disponibilidad(request):
+    agenda = Agenda.objects.all()
+    hoy = datetime.date.today()
+    data = []
+
+    # Lista de fechas que abarcan desde el dia actual hasta el fin del mes
+    fechas_mes = [datetime.date(year=hoy.year, month=hoy.month, day=indice) for indice in range(hoy.day, 31)]
+
+    for fecha_mes in fechas_mes:
+        data.append({
+            'fecha': str(fecha_mes),
+            'horas': [str(datetime.time(indice, 0)) for indice in range(9, 18)]
+        })
+    
+    for articulo in agenda:
+        fechas_ocupadas = [
+            str(articulo.fecha_inicio + datetime.timedelta(days=x))
+            for x in range((articulo.fecha_limite - articulo.fecha_inicio).days + 1)
+        ]
+        for fecha in data:
+            if fecha['fecha'] in fechas_ocupadas:
+                lista_horas = utils.calcular_lista_horas(articulo.horario_inicio, articulo.horario_fin)
+                fecha['horas'] = [str(datetime.time(indice, 0)) for indice in range(9, 18) if str(datetime.time(indice, 0)) not in lista_horas]
+
+
+    return HttpResponse(json.dumps({'disponibilidad': data}, sort_keys=False, indent=4), content_type="application/json")

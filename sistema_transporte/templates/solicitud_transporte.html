@@ -6,47 +6,29 @@
 {% block content %}
 <h1>Solicitud Transporte</h1>
 <div class="container-fluid">
-    <form action="" method="POST">
-        {% csrf_token %}
+    <form action="" method="post">
         <div class="row">
             <div class="col">
-                <label for="nombres-cliente">Nombre(s) del cliente:</label>
-                <input id="nombres-cliente" name="nombres-cliente" class="form-control mb-2" type="text">
+                <h2>Informacion del cliente</h2>
+                <label for="nombre_titular">Nombre del titular</label>
+                <input class="form-control mb-3" type="text" name="nombre_titular" id="nombre_titular">
 
-                <label for="apellido-paterno">Apellido paterno:</label>
-                <input id="apellido-paterno" name="apellido-paterno" class="form-control mb-2" type="text">
+                <label for="numero_tarjeta">Numero de tarjeta</label>
+                <input class="form-control mb-3" type="text" name="numero_tarjeta" id="numero_tarjeta">
 
-                <label for="apellido-materno">Apellido materno:</label>
-                <input id="apellido-materno" name="apellido-materno" class="form-control mb-2" type="text">
+                <label for="codigo_seguridad">Codigo de seguridad</label>
+                <input class="form-control mb-3" type="number" name="codigo_seguridad" id="codigo_seguridad">
 
-                <label for="telefono">Telefono:</label>
-                <input id="telefono" name="telefono" class="form-control mb-2" type="number">
+                <label for="correo">Correo electronico</label>
+                <input class="form-control mb-3" type="email" name="correo" id="correo">
 
-                <label for="correo">Correo:</label>
-                <input id="correo" name="correo" class="form-control mb-2" type="email">
+                <label for="fecha_vencimiento">Fecha de vencimiento</label>
+                <input class="form-control mb-3" type="date" name="fecha_vencimiento" id="fecha_vencimiento">
             </div>
             <div class="col">
-                <label for="lugar-origen">Lugar de origen:</label>
-                <input id="lugar-origen" name="lugar-origen" class="form-control mb-2" type="text">
-
-                <label for="lugar-destino">Lugar de destino:</label>
-                <input id="lugar-destino" name="lugar-destino" class="form-control mb-2" type="text">
-
-                <label for="fecha-origen">Fecha de origen:</label>
-                <input id="fecha-origen" name="fecha-origen" class="form-control mb-2" type="date">
-                
-                <label for="fecha">Fecha:</label>
-                <input id="fecha" name="fecha" class="form-control mb-2" type="date">
-                
-                <label for="mascota">Que mascota se va a transportar? :</label>
-                <select id="choferes" name="mascota" class="form-control mb-2">
-                    <option value="Mascota 1">Mascota 1</option>
-                    <option value="Mascota 2">Mascota 2</option>
-                    <option value="Mascota 3">Mascota 3</option>
-                </select>
+                <h2>Informacion del servicio</h2>
             </div>
         </div>
-        <button class="btn btn-danger">Enviar solicitud</button>
     </form>
 </div>
 {% endblock content %}
