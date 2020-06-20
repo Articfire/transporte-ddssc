@@ -7,16 +7,30 @@
 
 <h1>Agenda</h1>
 <div class="container-fluid">
-    <label for="fecha_servicio">Fecha del servicio a solicitar</label>
-    <select v-on:change="obtenerObjeto" class="form-control mb-3" name="fecha_servicio" id="fecha_servicio">
-        {% for articulo in disponibilidad %}
-            {% for hora in articulo.horas %}
-            <option value="{{ articulo.fecha }} {{hora}}">{{ articulo.fecha }} {{hora}}</option>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="fecha_servicio">Fecha del servicio a solicitar</label>
+        <select class="form-control mb-3" name="fecha_servicio" id="fecha_servicio">
+            {% for articulo in disponibilidad %}
+            {% if articulo.fecha == objeto.fecha %}
+            <option selected value="{{ articulo.fecha }}">{{ articulo.fecha }}</option>
+            {% else %}
+            <option value="{{ articulo.fecha }}">{{ articulo.fecha }}</option>
+            {% endif %}
             {% endfor %}
-        {% endfor %}
-    </select>
-    <button class="btn btn-primary">Elegir fecha y hora</button>
+        </select>
 
+        {% if objeto %}
+        <label for="hora_servicio">Hora del servicio a solicitar</label>
+        <select class="form-control mb-3" name="hora_servicio" id="hora_servicio">
+            {% for hora in objeto.horas %}
+            <option value="{{ hora }}">{{ hora }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        <button class="btn btn-primary">Elegir fecha y hora</button>    
+    </form>
 </div>
 {% endblock content %}
 

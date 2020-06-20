@@ -6,20 +6,26 @@
 {% block content%}
 <h1>Catalago</h1>
 <div class="container-fluid">
+    <div class="row">
     {% for articulo in catalago %}
-    <div class="card mb-3 mx-2" style="width: 18rem; float: left;">
-        <img class="card-img-top" src="{{ articulo.url }}" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">Paquete {{ articulo.id }}</h5>
-            <p class="card-text">{{ articulo.vehiculo_id.marca }} {{ articulo.vehiculo_id.modelo }}</p>
-            <p class="card-text">{{ articulo.descripcion }}</p>
-            <p class="card-text">${{ articulo.precio }}</p>
-            <form action="#" method="post">
-                <button href="#" class="btn btn-primary">Seleccionar paquete {{ articulo.id }}</button>
-            </form>
+        <div class="col">
+            <div class="card">
+                <img class="card-img-top" src="{{ articulo.url }}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Paquete {{ articulo.id }}</h5>
+                    <p class="card-text">{{ articulo.descripcion }}</p>
+                    <p class="card-text">${{ articulo.precio }}</p>
+                    <form action="" method="post">
+                    {% csrf_token %}
+                        <button class="btn btn-primary" name="catalago_id" value="{{ articulo.id }}">
+                            Seleccionar paquete {{ articulo.id }}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
     {% endfor %}
+    </div>
 </div>
 {% endblock content %}
 
