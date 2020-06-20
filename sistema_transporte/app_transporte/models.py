@@ -35,18 +35,24 @@ class Vehiculos(models.Model):
 
 class Clientes(models.Model):
 	nombre_titular = models.CharField(max_length=40)
-	numero_tarjeta = models.CharField(max_length=40)
-	codigo_seguridad = models.IntegerField()
 	correo = models.CharField(max_length=40)
-	fecha_vencimiento = models.DateField()
 
 	def __str__(self):
 		return self.nombre_titular
+
+class Pagos(models.Model):
+	numero_tarjeta = models.CharField(max_length=40)
+	codigo_seguridad = models.IntegerField()
+	fecha_vencimiento = models.DateField()
+
+	def __str__(self):
+		return self.numero_tarjeta
 
 class Servicios(models.Model):
 	chofer = models.ForeignKey(Empleados, on_delete=models.CASCADE)
 	vehiculo = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
 	cliente = models.OneToOneField(Clientes, on_delete=models.CASCADE)
+	pago = models.OneToOneField(Pagos, on_delete=models.CASCADE)
 	mascota = models.CharField(max_length=40)
 	lugar_inicio = models.CharField(max_length=40)
 	lugar_destino = models.CharField(max_length=40)

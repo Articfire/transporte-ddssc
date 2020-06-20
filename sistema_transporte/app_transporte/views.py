@@ -1,8 +1,8 @@
-from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
-from .models import Agenda, Catalago, Clientes
+from .models import Agenda, Servicios, Clientes, Catalago
 from . import utilerias as utils
 
 import datetime
@@ -13,25 +13,56 @@ import json
 def solicitud_transporte(request):
     data = {}
     if request.method == 'POST':
-        nombre_titular = request.POST['nombre_titular']
-        numero_tarjeta = request.POST['numero_tarjeta']
-        codigo_seguridad = request.POST['codigo_seguridad']
-        correo = request.POST['correo']
-        fecha_vencimiento = request.POST[' fecha_vencimiento']
+        try:
+            nombre_titular = request.POST['nombre_titular']
+            correo = request.POST['correo']
 
-        c = Clientes(nombre_titular, numero_tarjeta, codigo_seguridad, correo, fecha_vencimiento)
-        c.save()
-        
+            c = Clientes(nombre_titular=nombre_titular, correo=correo)
+            c.save()
+
+            request.session['servicio'] = {
+                'cliente_id': c.id,
+                'mascota': request.POST['mascota'],
+                'lugar_inicio': request.POST['lugar_inicio'],
+                'lugar_destino': request.POST['lugar_destino'],
+            }
+
+            return HttpResponseRedirect('catalago')
+        except Exception as e:
+            return HttpResponse('Error: {}'.format(e))
     return render(request, 'solicitud_transporte.html', data)
 
 def catalago(request):
+    data = {}
+    if request.method == 'POST':
+        catalago_id = int(request.POST['catalago_id'])
+        request.session['servicio'].update({
+            'catalago_id': catalago_id
+        })
     catalago = list(Catalago.objects.all())
     data = {'catalago': catalago}
     return render(request, 'catalago.html', data)
 
 def agenda(request):
-    data = requests.get('http://localhost:8000/api/disponibilidad').json()
+    try:
+        data = {}
+        disponibilidad = requests.get('http://localhost:8000/api/disponibilidad').json()
+        data.update(disponibilidad)
+        if request.method == 'POST':
+            # buscar objeto mediante fecha
+            fecha_servicio = request.POST['fecha_servicio']
+            for objeto in data['disponibilidad']:
+                if fecha_servicio == objeto['fecha']:
+                    data.update({
+                        'objeto': objeto
+                    })
+                    break
+    except Exception as e:
+        return HttpResponse("Error: {}".format(e))
     return render(request, 'agenda.html', data)
+
+def pago(request):
+    return HttpResponse("Pago")
 
 def notificacion(request):
     data = {}
@@ -100,7 +131,25 @@ def api_disponibilidad(request):
         for fecha in data:
             if fecha['fecha'] in fechas_ocupadas:
                 lista_horas = utils.calcular_lista_horas(articulo.horario_inicio, articulo.horario_fin)
-                fecha['horas'] = [str(datetime.time(indice, 0)) for indice in range(9, 18) if str(datetime.time(indice, 0)) not in lista_horas]
+                fecha['horas'] = [
+                    str(datetime.time(indice, 0)) 
+                    for indice in range(9, 18) 
+                    if str(datetime.time(indice, 0)) not in lista_horas
+                ]
 
 
     return HttpResponse(json.dumps({'disponibilidad': data}, sort_keys=False, indent=4), content_type="application/json")
+
+@csrf_exempt
+def api_venta(request, detalle_venta_id):
+    if request.method == 'POST':
+        # print("ID: {}".format(detalle_venta_id))
+        
+        return HttpResponse("Peticion exitosa. El Id enviado es {}.".format(detalle_venta_id))
+    else:
+        return HttpResponse("El metodo de la peticion Http debe de ser POST.")
+
+@csrf_exempt
+def api_reservacion(request):
+    if request.method == 'POST':
+        pass

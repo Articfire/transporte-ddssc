@@ -7,26 +7,31 @@
 <h1>Solicitud Transporte</h1>
 <div class="container-fluid">
     <form action="" method="post">
+    {% csrf_token %}
         <div class="row">
+            <div class="col-2">
+            </div>
             <div class="col">
-                <h2>Informacion del cliente</h2>
+                <h3>Informacion del cliente</h3>
                 <label for="nombre_titular">Nombre del titular</label>
                 <input class="form-control mb-3" type="text" name="nombre_titular" id="nombre_titular">
-
-                <label for="numero_tarjeta">Numero de tarjeta</label>
-                <input class="form-control mb-3" type="text" name="numero_tarjeta" id="numero_tarjeta">
-
-                <label for="codigo_seguridad">Codigo de seguridad</label>
-                <input class="form-control mb-3" type="number" name="codigo_seguridad" id="codigo_seguridad">
 
                 <label for="correo">Correo electronico</label>
                 <input class="form-control mb-3" type="email" name="correo" id="correo">
 
-                <label for="fecha_vencimiento">Fecha de vencimiento</label>
-                <input class="form-control mb-3" type="date" name="fecha_vencimiento" id="fecha_vencimiento">
+                <h3>Informacion del servicio</h3>
+                <label for="mascota">Nombre de la mascota</label>
+                <input class="form-control mb-3" type="text" name="mascota" id="mascota">
+
+                <label for="lugar_inicio">Lugar de inicio</label>
+                <input class="form-control mb-3" type="text" name="lugar_inicio" id="lugar_inicio">
+
+                <label for="lugar_destino">Lugar de destino</label>
+                <input class="form-control mb-3" type="text" name="lugar_destino" id="lugar_destino">
+
+                <button class="btn btn-danger mb-3">Enviar formulario</button>
             </div>
-            <div class="col">
-                <h2>Informacion del servicio</h2>
+            <div class="col-2">
             </div>
         </div>
     </form>
