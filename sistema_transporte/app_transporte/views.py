@@ -1,3 +1,4 @@
+# pylint: disable=E1101
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -20,12 +21,10 @@ def solicitud_transporte(request):
             c = Clientes(nombre_titular=nombre_titular, correo=correo)
             c.save()
 
-            request.session['servicio'] = {
-                'cliente_id': c.id,
-                'mascota': request.POST['mascota'],
-                'lugar_inicio': request.POST['lugar_inicio'],
-                'lugar_destino': request.POST['lugar_destino'],
-            }
+            request.session['cliente_id'] = c.id
+            request.session['mascota'] = request.POST['mascota']
+            request.session['lugar_inicio'] = request.POST['lugar_inicio']
+            request.session['lugar_destino'] = request.POST['lugar_destino']
 
             return HttpResponseRedirect('catalago')
         except Exception as e:
@@ -36,9 +35,8 @@ def catalago(request):
     data = {}
     if request.method == 'POST':
         catalago_id = int(request.POST['catalago_id'])
-        request.session['servicio'].update({
-            'catalago_id': catalago_id
-        })
+        request.session['catalago_id'] = catalago_id
+        return HttpResponseRedirect('agenda')
     catalago = list(Catalago.objects.all())
     data = {'catalago': catalago}
     return render(request, 'catalago.html', data)
@@ -145,7 +143,7 @@ def api_venta(request, detalle_venta_id):
     if request.method == 'POST':
         # print("ID: {}".format(detalle_venta_id))
         
-        return HttpResponse("Peticion exitosa. El Id enviado es {}.".format(detalle_venta_id))
+        return HttpResponse("Peticion exitosa. El Id enviado fue {}.".format(detalle_venta_id))
     else:
         return HttpResponse("El metodo de la peticion Http debe de ser POST.")
 
