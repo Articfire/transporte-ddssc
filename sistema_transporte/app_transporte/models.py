@@ -85,7 +85,7 @@ class Agenda(models.Model):
 		(datetime.time(16, 0), '4 PM'),
 		(datetime.time(17, 0), '5 PM'),
 	)
-	servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE)
+	servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE, default=None)
 	fecha_inicio = models.DateField()
 	fecha_limite = models.DateField()
 	horario_inicio = models.TimeField(choices=HORAS)

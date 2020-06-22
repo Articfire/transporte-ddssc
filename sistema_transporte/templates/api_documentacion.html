@@ -4,7 +4,21 @@
 {% block title %}API Transporte{% endblock title %}
 
 {% block content %}
-<h1>Documentacion de la API</h1>
+<div class="container-fluid">
+    <h1>Docs de la API de Transportes</h1>
+    {% comment %} path('api/disponibilidad', views.api_disponibilidad, name='api_disponibilidad'),
+    path('api/catalago', views.api_catalago, name='api_catalago'),
+    path('api/catalago/<int:catalago_id>', views.api_catalago_filtro, name='api_catalago_filtro'),
+    path('api/venta/<int:detalle_venta_id>', views.api_venta, name='api_venta') {% endcomment %}
+    <h3>Disponibilidad</h3>
+    <p><b>GET</b> api/disponibilidad</p>
+
+    <h3>Catalogo</h3>
+    <p><b>GET</b> api/catalago</p>
+    <p><b>GET</b> api/catalago/(id)</p>
+    
+    <h3>Consumo de la api de Ventas</h3>
+    <p><b>POST</b> api/venta/(id)</p>
 </div>
 {% endblock content %}
 
