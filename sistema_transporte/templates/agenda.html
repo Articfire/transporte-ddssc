@@ -12,11 +12,11 @@
         <label for="fecha_servicio">Fecha del servicio a solicitar</label>
         <select class="form-control mb-3" name="fecha_servicio" id="fecha_servicio">
             {% for articulo in disponibilidad %}
-            {% if articulo.fecha == objeto.fecha %}
-            <option selected value="{{ articulo.fecha }}">{{ articulo.fecha }}</option>
-            {% else %}
-            <option value="{{ articulo.fecha }}">{{ articulo.fecha }}</option>
-            {% endif %}
+                {% if articulo.fecha == objeto.fecha %}
+                <option selected value="{{ articulo.fecha }}">{{ articulo.fecha }}</option>
+                {% else %}
+                <option value="{{ articulo.fecha }}">{{ articulo.fecha }}</option>
+                {% endif %}
             {% endfor %}
         </select>
 
@@ -27,9 +27,14 @@
             <option value="{{ hora }}">{{ hora }}</option>
             {% endfor %}
         </select>
+        <p>
+            <b>Nota: </b>
+            si seleccionaste mal la fecha, recarga la pagina presionando F5.
+        </p>
+        <button class="btn btn-primary">Crear cita</button>
+        {% else %}
+        <button class="btn btn-primary">Elige la fecha</button>
         {% endif %}
-
-        <button class="btn btn-primary">Elegir fecha y hora</button>    
     </form>
 </div>
 {% endblock content %}
