@@ -144,6 +144,8 @@ def asignacion(request):
         servicio_id = request.POST.get('servicio')
         servicio = Servicios.objects.get(id=servicio_id)
         servicio.estado = 'TE'
+        servicio.chofer = Empleados.objects.get(nombres=request.POST.get('chofer'))
+        servicio.vehiculo = Vehiculos.objects.get(modelo=request.POST.get('vehiculo')[-1::])
         servicio.save()
         return HttpResponseRedirect('firma/'+str(servicio_id))
     data = {'servicios': []}
@@ -159,8 +161,10 @@ def asignacion(request):
             'fecha_limite': str(cita.fecha_limite),
             'horario_inicio': str(cita.horario_inicio),
             'horario_fin': str(cita.horario_fin),
-            'chofer': servicio.chofer,
-            'vehiculo': servicio.vehiculo
+        })
+        data.update({
+            'choferes': Empleados.objects.filter(puesto='CH'),
+            'vehiculos': Vehiculos.objects.all()
         })
 
     return render(request, 'asignacion.html', data)

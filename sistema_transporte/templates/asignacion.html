@@ -24,36 +24,36 @@
         </thead>
         <tbody>
         {% for servicio in servicios %}
-            <tr>
-                <td scope="row">{{ servicio.id }}</td>
-                <td>{{ servicio.mascota }}</td>
-                <td>{{ servicio.lugar_inicio }}</td>
-                <td>{{ servicio.lugar_destino }}</td>
-                <td>{{ servicio.fecha_inicio }}</td>
-                <td>{{ servicio.fecha_limite }}</td>
-                <td>{{ servicio.horario_inicio }}</td>
-                <td>{{ servicio.horario_fin }}</td>
-                <td>
-                    <select class="form-control" name="chofer">
-                    {% for servicio in servicios %}
-                        <option value="{{servicio.chofer}}">{{servicio.chofer}}</option>
-                    {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    <select class="form-control" name="vehiculo">
-                    {% for servicio in servicios %}
-                        <option value="{{servicio.vehiculo}}">{{servicio.vehiculo}}</option>
-                    {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    <form action="" method="post">
-                    {% csrf_token %}
+            <form action="" method="post">
+            {% csrf_token %}
+                <tr>
+                    <td scope="row">{{ servicio.id }}</td>
+                    <td>{{ servicio.mascota }}</td>
+                    <td>{{ servicio.lugar_inicio }}</td>
+                    <td>{{ servicio.lugar_destino }}</td>
+                    <td>{{ servicio.fecha_inicio }}</td>
+                    <td>{{ servicio.fecha_limite }}</td>
+                    <td>{{ servicio.horario_inicio }}</td>
+                    <td>{{ servicio.horario_fin }}</td>
+                    <td>
+                        <select class="form-control" name="chofer">
+                        {% for chofer in choferes %}
+                            <option value="{{chofer}}">{{chofer}}</option>
+                        {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="vehiculo">
+                        {% for vehiculo in vehiculos %}
+                            <option value="{{vehiculo}}">{{vehiculo}}</option>
+                        {% endfor %}
+                        </select>
+                    </td>
+                    <td>
                         <button class="btn btn-success" name="servicio" value="{{servicio.id}}">Ejecutar</button>
-                    </form>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </form>
         {% endfor %}
         </tbody>
     </table>
