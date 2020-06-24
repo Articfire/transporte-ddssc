@@ -249,8 +249,7 @@ def api_disponibilidad(request):
     return HttpResponse(json.dumps({'disponibilidad': data}, sort_keys=False, indent=4), content_type="application/json")
 
 @csrf_exempt
-def api_venta(request, detalle_venta_id):
-    line = 0
+def consumir_venta(request, detalle_venta_id):
     try:
         if request.method == 'POST':
             base_url = 'https://apimascotasventas.azurewebsites.net/api/'
@@ -317,5 +316,5 @@ def api_venta(request, detalle_venta_id):
         else:
             return HttpResponse("El metodo de la peticion Http debe de ser POST.")
     except Exception as e:
-        print("Error en "+str(line))
+        print("Error en "+str(e))
         return HttpResponse("Error: {}".format(e))
