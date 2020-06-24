@@ -1,12 +1,11 @@
 from django.db import models
-from django.utils import timezone
 import datetime
 
 
 class Empleados(models.Model):
     nombres = models.CharField(max_length=40)
-    apellido_materno = models.CharField(max_length=20)
-    apellido_paterno = models.CharField(max_length=20)
+    apellido_materno = models.CharField(max_length=40)
+    apellido_paterno = models.CharField(max_length=40)
     fecha_nacimiento = models.DateField()
     rfc = models.CharField(max_length=13)
 
@@ -26,8 +25,8 @@ class Empleados(models.Model):
         return self.nombres
 
 class Vehiculos(models.Model):
-	marca = models.CharField(max_length=20)
-	modelo = models.CharField(max_length=20)
+	marca = models.CharField(max_length=40)
+	modelo = models.CharField(max_length=40)
 	disponible = models.BooleanField()
 	
 	def __str__(self):
@@ -48,31 +47,6 @@ class Pagos(models.Model):
 	def __str__(self):
 		return self.numero_tarjeta
 
-class Servicios(models.Model):
-	chofer = models.ForeignKey(Empleados, on_delete=models.CASCADE)
-	vehiculo = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
-	cliente = models.OneToOneField(Clientes, on_delete=models.CASCADE)
-	pago = models.OneToOneField(Pagos, on_delete=models.CASCADE)
-	mascota = models.CharField(max_length=40)
-	lugar_inicio = models.CharField(max_length=40)
-	lugar_destino = models.CharField(max_length=40)
-
-	estado = models.CharField(
-	    max_length=2,
-	    choices=[
-            ('SO', 'Solicitado'),
-			('AG', 'Agendado'),
-			('EJ', 'Ejecucion'),
-			('TE', 'Terminado'),
-			('FI', 'Firmado')
-	    ],
-	    default='SO'
-	)
-	cve_detalle_venta = models.IntegerField(default=0)
-
-	def __str__(self):
-	    return 'Masctota '+self.mascota
-
 class Agenda(models.Model):
 	HORAS = (
 		(datetime.time(9, 0), '9 AM'),
@@ -85,13 +59,10 @@ class Agenda(models.Model):
 		(datetime.time(16, 0), '4 PM'),
 		(datetime.time(17, 0), '5 PM'),
 	)
-	servicio = models.OneToOneField(Servicios, on_delete=models.CASCADE, default=None)
 	fecha_inicio = models.DateField()
 	fecha_limite = models.DateField()
 	horario_inicio = models.TimeField(choices=HORAS)
 	horario_fin = models.TimeField(choices=HORAS)
-
-	objects = models.Manager()
 
 	def __str__(self):
 	    return str(self.fecha_inicio)
@@ -99,10 +70,39 @@ class Agenda(models.Model):
 class Catalago(models.Model):
 	vehiculo = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
 	precio = models.FloatField()
-	descripcion = models.CharField(max_length=50)
+	descripcion = models.CharField(max_length=40)
 	url = models.CharField(max_length=100)
 
 	objects = models.Manager()
 
 	def __str__(self):
 	    return self.descripcion
+
+class Servicios(models.Model):
+	chofer = models.ForeignKey(Empleados, on_delete=models.CASCADE)
+	vehiculo = models.ForeignKey(Vehiculos, on_delete=models.CASCADE)
+	cliente = models.OneToOneField(Clientes, on_delete=models.CASCADE)
+	pago = models.OneToOneField(Pagos, on_delete=models.CASCADE)
+	servicio_vendido = models.ForeignKey(Catalago, on_delete=models.CASCADE)
+	cita = models.OneToOneField(Agenda, on_delete=models.CASCADE)
+
+	mascota = models.CharField(max_length=30)
+	lugar_inicio = models.CharField(max_length=40)
+	lugar_destino = models.CharField(max_length=40)
+	departamento_venta = models.CharField(max_length=40)
+	monto_pagado = models.FloatField()
+
+	estado = models.CharField(
+	    max_length=2,
+	    choices=[
+            ('SO', 'Solicitado'),
+			('AG', 'Agendado'),
+			('EJ', 'Ejecucion'),
+			('TE', 'Terminado'),
+			('FI', 'Firmado')
+	    ],
+	    default='SO'
+	)
+
+	def __str__(self):
+	    return "Transporte de "+self.mascota+" a destino "+self.lugar_destino+"."
