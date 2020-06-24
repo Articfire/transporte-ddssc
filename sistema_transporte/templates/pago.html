@@ -20,43 +20,23 @@
         <div class="row">
             <div class="col">
 
-				<h5>Nombre del titular</h5>
-				<div class="mb-3">
-					<input type="text" class="form-control" placeholder="Nombre del titular">
-				</div>
-
 				<h5>Numero de tarjeta</h5>
-				<div class="mb-3">
-					<input type="text" class="form-control" placeholder="Numero de tarjeta">
-				</div>
+				<input name="numero_tarjeta" type="text" class="form-control mb-3" placeholder="Numero de tarjeta">
 
 				<h5>Fecha de expiracion</h5>
-				<div class="row">
-					<div class="col">
-						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="Mes">
-						</div>
-					</div>
-					<div class="col">
-						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="Año">
-						</div>
-					</div>
-				</div>
+				<input name="fecha_expiracion" type="date" class="form-control mb-3" placeholder="fecha_expiracion">
 
 				<h5>Codigo de seguridad</h5>
 				<div class="row">
-					<div class="col-4">
-						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="3 digitos">
-						</div>
+					<div class="col-4 mb-3">
+						<input name="codigo_seguridad" type="text" class="form-control" placeholder="3 digitos">
 					</div>
 				</div>
+
             </div>
             <div class="col">
             </div>
         </div>
-
         <button class="btn btn-danger">Enviar datos de transaccion</button>
     </form>
 </div>

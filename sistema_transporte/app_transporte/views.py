@@ -35,7 +35,7 @@ def catalago(request):
     data = {}
     if request.method == 'POST':
         catalago_id = request.POST.get('catalago_id')
-        request.session['catalago_id'] = catalago_id
+        request.session['catalago_id'] = int(catalago_id)
         return HttpResponseRedirect('agenda')
     catalago = list(Catalago.objects.all())
     data = {'catalago': catalago}
@@ -46,46 +46,139 @@ def agenda(request):
         data = {}
         disponibilidad = requests.get('http://localhost:8000/api/disponibilidad').json()
         data.update(disponibilidad)
+
         if request.method == 'POST':
             fecha_servicio = request.POST.get('fecha_servicio')
 
-            if request.POST.get('hora_servicio') == None:
+            if request.POST.get('hora_servicio'):
+                hora = datetime.datetime.strptime(request.POST.get('hora_servicio'), '%H:%M:%S').time()
+
+                request.session['fecha_inicio'] = fecha_servicio,
+                request.session['fecha_limite'] = fecha_servicio,
+                request.session['horario_inicio'] = str(hora),
+                request.session['horario_fin'] = str(datetime.time(hora.hour+1, hora.minute, hora.second))
+                return HttpResponseRedirect('pago')
+            else:
                 for objeto in data['disponibilidad']:
                     if fecha_servicio == objeto['fecha']:
                         data.update({
                             'objeto': objeto
                         })
                         break
-            else:
-                fecha = datetime.datetime.strptime(fecha_servicio, '%Y-%m-%d').date()
-                hora = datetime.datetime.strptime(request.POST.get('hora_servicio'), '%H:%M:%S').time()
-                nueva_agenda = Agenda(
-                    fecha_inicio=fecha,
-                    fecha_limite=fecha,
-                    horario_inicio=hora,
-                    horario_fin=datetime.time(hora.hour+1, hora.minute, hora.second)
-                )
-                nueva_agenda.save()
-                request.session['agenda_id'] = nueva_agenda.id
-                return HttpResponseRedirect('pago')
-
     except Exception as e:
         return HttpResponse("Error: {}".format(e))
     return render(request, 'agenda.html', data)
 
 def pago(request):
-    return HttpResponse(request.session['agenda_id'])
+    data = {}
+    try:
+        if request.method == 'POST':
+            numero_tarjeta = request.POST['numero_tarjeta']
+            fecha_expiracion = request.POST['fecha_expiracion']
+            codigo_seguridad = int(request.POST['codigo_seguridad'])
+            pago_nuevo = Pagos(
+                numero_tarjeta=numero_tarjeta,
+                codigo_seguridad=codigo_seguridad,
+                fecha_vencimiento=fecha_expiracion,
+            )
+            pago_nuevo.save()
+
+            request.session['pago_id'] = pago_nuevo.id
+
+            return HttpResponseRedirect('notificacion')
+        return render(request, "pago.html", data)
+    except Exception as e:
+        return HttpResponse('Error: '+str(e))
 
 def notificacion(request):
-    data = {}
+    data = {'disponible': True}
+    citas = Agenda.objects.all()
+
+    fecha = datetime.datetime.strptime(request.session['fecha_inicio'][0], '%Y-%m-%d').date()
+    hora = datetime.datetime.strptime(request.session['horario_inicio'][0], '%H:%M:%S').time()
+
+    if request.method == 'POST':
+        if request.POST.get('aceptar'):
+            nueva_cita = Agenda(
+                fecha_inicio=fecha,
+                fecha_limite=fecha,
+                horario_inicio=hora,
+                horario_fin=datetime.time(
+                    hour=hora.hour+1, 
+                    minute=hora.minute, 
+                    second=hora.second
+                )
+            )
+            nueva_cita.save()
+            request.session['agenda_id'] = nueva_cita.id
+
+            catalago = Catalago.objects.get(id=request.session['catalago_id'])
+            vehiculo = Vehiculos.objects.get(id=catalago.vehiculo_id)
+            cliente = Clientes.objects.get(id=request.session['cliente_id']),
+            pago = Pagos.objects.get(id=request.session['pago_id']),
+
+            nuevo_servicio = Servicios(
+                chofer=Empleados.objects.get(nombres='Juan Pablo'),
+                vehiculo=vehiculo,
+                cliente=cliente[0],
+                pago=pago[0],
+                servicio_vendido=catalago,
+                cita=nueva_cita,
+                monto_pagado=catalago.precio,
+                mascota=request.session['mascota'],
+                lugar_inicio=request.session['lugar_inicio'],
+                lugar_destino=request.session['lugar_destino']
+            )
+            nuevo_servicio.save()
+
+            return HttpResponseRedirect('asignacion')
+        else:
+            return HttpResponseRedirect('agenda')
+    for cita in citas:
+        if cita.fecha_inicio == fecha and cita.horario_inicio == hora:
+            data['disponible'] = False
     return render(request, 'notificacion.html', data)
 
 def asignacion(request):
-    data = {}
+    if request.method == 'POST':
+        servicio_id = request.POST.get('servicio')
+        servicio = Servicios.objects.get(id=servicio_id)
+        servicio.estado = 'TE'
+        servicio.save()
+        return HttpResponseRedirect('firma/'+str(servicio_id))
+    data = {'servicios': []}
+    servicios = Servicios.objects.all()
+    for servicio in servicios:
+        cita = Agenda.objects.get(id=servicio.cita.id)
+        data['servicios'].append({
+            'id': servicio.id,
+            'mascota': servicio.mascota,
+            'lugar_inicio': servicio.lugar_inicio,
+            'lugar_destino': servicio.lugar_destino,
+            'fecha_inicio': str(cita.fecha_inicio),
+            'fecha_limite': str(cita.fecha_limite),
+            'horario_inicio': str(cita.horario_inicio),
+            'horario_fin': str(cita.horario_fin),
+            'chofer': servicio.chofer,
+            'vehiculo': servicio.vehiculo
+        })
+
     return render(request, 'asignacion.html', data)
 
-def firma(request):
-    data = {}
+def firma(request, servicio_id):
+    servicio = Servicios.objects.get(id=servicio_id)
+    if servicio.estado == 'FI':
+        data = {'firmado': True}
+    else:
+        data = {'firmado': False}
+    if request.method == 'POST' and request.POST.get('firma'):
+        servicio.estado = 'FI'
+        servicio.save()
+        return HttpResponseRedirect(str(servicio_id))
+    data.update({
+        'chofer': servicio.chofer,
+        'vehiculo': servicio.vehiculo,
+    })
     return render(request, 'firma.html', data)
 
 def api_documentacion(request):
@@ -191,28 +284,30 @@ def api_venta(request, detalle_venta_id):
                 fecha_vencimiento=datetime.date(year=int(anio_vencimiento), month=int(mes_vencimiento), day=1)
             )
             pago.save()
-
-            servicio = Servicios(
-                chofer_id=empleado.id,
-                vehiculo_id=vehiculo.id,
-                cliente_id=cliente.id,
-                pago_id=pago.id,
-                mascota="Mascota",
-                lugar_inicio="Lugar de origen",
-                lugar_destino="Lugar de destino",
-                cve_detalle_venta=int(detalle_venta_id)
-            )
-            servicio.save()
             
             hora_agendada = datetime.datetime.strptime(hora_agendada, '%H:%M:%S').time()
             agenda = Agenda(
-                servicio_id=servicio.id,
                 fecha_inicio=datetime.datetime.strptime(fecha_agendada, '%Y-%m-%d').date(),
                 fecha_limite=datetime.datetime.strptime(fecha_agendada, '%Y-%m-%d').date(),
                 horario_inicio=hora_agendada,
                 horario_fin=datetime.time(hour=hora_agendada.hour+1, minute=hora_agendada.minute, second=hora_agendada.second)
             )
             agenda.save()
+
+            servicio = Servicios(
+                chofer_id=empleado.id,
+                vehiculo_id=vehiculo.id,
+                cliente_id=cliente.id,
+                pago_id=pago.id,
+                servicio_vendido=catalago,
+                cita=agenda,
+                mascota="Mascota",
+                lugar_inicio="Lugar de origen",
+                lugar_destino="Lugar de destino",
+                departamento_venta="ventas",
+                monto_pagado=catalago.precio
+            )
+            servicio.save()
 
             return HttpResponse("Peticion exitosa. El Id enviado fue "+str(detalle_venta_id)+".")
         else:

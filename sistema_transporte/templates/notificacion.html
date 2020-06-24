@@ -6,13 +6,18 @@
 {% block content %}
 <h1>Agenda Servicio</h1>
 <div class="container-fluid">
-	<form action="#">
+	<form action="" method="post">
 		{% csrf_token %}
 		<h3>Notificacion</h3>
-		<p>Su solicitud ha sido procesada y su horario esta desocupado.
-		Desea agendar el servicio?</p>
-		<button class="btn btn-success">Aceptar</button>
-		<button class="btn btn-danger">Cancelar</button>
+		{% if disponible %}
+		<p>Su solicitud ha sido procesada y resulta ser valida, desea continuar y agendar el servicio?</p>
+		<button class="btn btn-success" name="aceptar" value="aceptar">Acepto</button>
+		<button class="btn btn-danger" name="cancelar">Cancelar</button>
+		{% else %}
+		<p>Su solicitud ha sido procesada, sin embargo, la fecha o la hora no es valida.</p>
+		<button class="btn btn-danger" name="regresar">Regresar</button>
+		<button class="btn btn-warning" name="aceptar" value="aceptar">debugging Acepto</button>
+		{% endif %}
 	</form>
 </div>
 {% endblock content %}
